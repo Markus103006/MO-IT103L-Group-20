@@ -6,8 +6,6 @@ import java.awt.event.*;
 
 public class MotorPHLogin {
     
-    
-
     public static void main(String[] args) {
 
         // FRAME
@@ -85,9 +83,9 @@ public class MotorPHLogin {
         
         // ================= RIGHT PANEL =================
        JPanel rightPanel = new JPanel() {
-       
-        @Override
-        public void paintComponent(Graphics g) {
+
+    @Override
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         Graphics2D g2d = (Graphics2D) g;
@@ -98,25 +96,39 @@ public class MotorPHLogin {
 
         g2d.setPaint(gp);
         g2d.fillRect(0, 0, getWidth(), getHeight());
-        }
-        };
+    }
+};
 
-        rightPanel.setLayout(null);
-        rightPanel.setOpaque(false); 
-        
-        JLabel systemName = new JLabel("MotorPH");
-        systemName.setForeground(Color.WHITE);
-        systemName.setFont(new Font("Segoe UI", Font.BOLD, 40));
-        systemName.setBounds(120, 170, 300, 50);
-        rightPanel.add(systemName);
+rightPanel.setLayout(null);
+rightPanel.setOpaque(false); 
 
+// ================= TITLE =================
+JLabel systemName = new JLabel("MotorPH");
+systemName.setForeground(Color.WHITE);
+systemName.setFont(new Font("Segoe UI", Font.BOLD, 40));
+systemName.setBounds(130, 110, 300, 50); // moved slightly higher
+rightPanel.add(systemName);
 
-        JLabel systemSub = new JLabel("Payroll System");
-        systemSub.setForeground(new Color(220, 220, 220));
-        systemSub.setFont(new Font("Segoe UI", Font.PLAIN, 18));
-        systemSub.setBounds(135, 215, 300, 30);
-        rightPanel.add(systemSub);
-        
+// ================= SUBTITLE =================
+JLabel systemSub = new JLabel("Payroll System");
+systemSub.setForeground(new Color(220, 220, 220));
+systemSub.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+systemSub.setBounds(160, 160, 300, 30); // spacing under title
+rightPanel.add(systemSub);
+
+// ================= IMAGE =================
+ImageIcon original = new ImageIcon(
+    MotorPHLogin.class.getResource("/javaapplication28/icon.png")
+);
+
+Image scaled = original.getImage().getScaledInstance(
+    160, 160, Image.SCALE_SMOOTH
+);
+
+JLabel imageLabel = new JLabel(new ImageIcon(scaled));
+imageLabel.setBounds(140, 210, 160, 160);
+
+rightPanel.add(imageLabel);
        
 
         // ADD PANELS
