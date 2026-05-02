@@ -80,42 +80,88 @@ public class MotorPHLogin {
         JButton exitBtn = new JButton("Exit");
         exitBtn.setBounds(40, 370, 300, 40);
         leftPanel.add(exitBtn);    
-        
-        // ================= RIGHT PANEL =================
-       JPanel rightPanel = new JPanel() {
 
-    @Override
-    public void paintComponent(Graphics g) {
+        // ================= ANIMATION VARIABLES =================
+        final int[] x = {0};     // moves → right
+        final int[] x2 = {300};  // moves ← left
+
+        // ================= RIGHT PANEL =================
+        JPanel rightPanel = new JPanel() {
+
+        @Override
+        protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         Graphics2D g2d = (Graphics2D) g;
+
+        // smooth rendering
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                             RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // ================= GRADIENT BACKGROUND =================
         GradientPaint gp = new GradientPaint(
                 0, 0, new Color(30, 58, 138),
                 getWidth(), getHeight(), new Color(15, 25, 80)
         );
-
         g2d.setPaint(gp);
         g2d.fillRect(0, 0, getWidth(), getHeight());
+
+        // ================= FLOATING CIRCLES =================
+
+        // Circle 1 (right →)
+        g2d.setColor(new Color(255, 255, 255, 30));
+        g2d.fillOval(x[0], 220, 150, 150);
+
+        // Circle 2 (mirrored movement)
+        g2d.fillOval(getWidth() - x[0] - 200, 80, 100, 100);
+
+        // Circle 3 (left ←)
+        g2d.setColor(new Color(255, 255, 255, 20)); // more subtle
+        g2d.fillOval(x2[0], 320, 120, 120);
+        }
+    };
+
+    rightPanel.setLayout(null);
+    rightPanel.setOpaque(false);
+
+    // ================= ANIMATION TIMER =================
+    Timer animation = new Timer(30, e -> {
+
+    // move right
+    x[0] += 1;
+    // move left
+    x2[0] -= 1;
+
+    // reset when off screen
+    if (x[0] > rightPanel.getWidth()) {
+        x[0] = -150;
     }
-};
 
-rightPanel.setLayout(null);
-rightPanel.setOpaque(false); 
+    if (x2[0] < -150) {
+        x2[0] = rightPanel.getWidth();
+    }
 
-// ================= TITLE =================
+    rightPanel.repaint();
+    });
+
+    animation.start();
+
+    rightPanel.setLayout(null);
+    rightPanel.setOpaque(false);
+
+    // ================= TITLE =================
 JLabel systemName = new JLabel("MotorPH");
 systemName.setForeground(Color.WHITE);
-systemName.setFont(new Font("Segoe UI", Font.BOLD, 40));
-systemName.setBounds(130, 110, 300, 50); // moved slightly higher
+systemName.setFont(new Font("Segoe UI", Font.BOLD, 42));
+systemName.setBounds(120, 100, 300, 50); // centered better
 rightPanel.add(systemName);
 
 // ================= SUBTITLE =================
 JLabel systemSub = new JLabel("Payroll System");
-systemSub.setForeground(new Color(220, 220, 220));
+systemSub.setForeground(new Color(200, 200, 200));
 systemSub.setFont(new Font("Segoe UI", Font.PLAIN, 18));
-systemSub.setBounds(160, 160, 300, 30); // spacing under title
+systemSub.setBounds(150, 150, 300, 30);
 rightPanel.add(systemSub);
-
 // ================= IMAGE =================
 ImageIcon original = new ImageIcon(
     MotorPHLogin.class.getResource("/javaapplication28/icon.png")
@@ -129,6 +175,59 @@ JLabel imageLabel = new JLabel(new ImageIcon(scaled));
 imageLabel.setBounds(140, 210, 160, 160);
 
 rightPanel.add(imageLabel);
+
+// ================= HELP BUTTON =================
+JButton helpBtn = new JButton("?");
+
+// style
+helpBtn.setFocusPainted(false);
+helpBtn.setBorderPainted(false);
+helpBtn.setForeground(Color.WHITE);
+helpBtn.setBackground(new Color(255, 255, 255, 40));
+helpBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
+helpBtn.setContentAreaFilled(false);
+helpBtn.setOpaque(true);
+
+int btnSize = 50;
+
+// hover effect
+helpBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+    public void mouseEntered(java.awt.event.MouseEvent evt) {
+        helpBtn.setBackground(new Color(255, 255, 255, 80));
+    }
+
+    @Override
+    public void mouseExited(java.awt.event.MouseEvent evt) {
+        helpBtn.setBackground(new Color(255, 255, 255, 40));
+    }
+});
+
+// action
+helpBtn.addActionListener(e -> {
+    JOptionPane.showMessageDialog(
+        null,
+        "Need help?\n\nEmail: corporate@motorph.com\nPhone: (028) 911-5071",
+        "Support",
+        JOptionPane.INFORMATION_MESSAGE
+    );
+});
+
+// initial temporary placement (won’t matter after resize event)
+helpBtn.setBounds(0, 0, btnSize, btnSize);
+
+rightPanel.add(helpBtn);
+
+// FIX POSITION AFTER PANEL IS RENDERED + ON RESIZE
+frame.addComponentListener(new java.awt.event.ComponentAdapter() {
+    @Override
+    public void componentResized(java.awt.event.ComponentEvent evt) {
+
+        int x = rightPanel.getWidth() - btnSize - 20;
+        int y = rightPanel.getHeight() - btnSize - 20;
+
+        helpBtn.setBounds(x, y, btnSize, btnSize);
+    }
+});
        
 
         // ADD PANELS
